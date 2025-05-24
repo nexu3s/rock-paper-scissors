@@ -11,20 +11,20 @@
             align-items: center;
             font-size: 20px;
             text-align: center;
-            min-height: 100vh; 
-            margin: 0; 
+            min-height: 100vh;
+            margin: 0;
         }
 
         * {
-            font-family: 'Cascadia Code', Consolas, monospace; 
+            font-family: 'Cascadia Code', Consolas, monospace;
             background-color: rgb(25, 25, 25);
             color: #fff;
-            line-height: 1.5; 
-            box-sizing: border-box; 
+            line-height: 1.5;
+            box-sizing: border-box;
         }
 
         button,
-        .btn { 
+        .btn {
             border-radius: 4px;
             display: flex;
             align-items: center;
@@ -35,31 +35,31 @@
             cursor: pointer;
             outline: none;
             border: 1px solid rgb(95, 95, 95);
-            border-radius: 100%; 
+            border-radius: 100%;
             font-size: inherit;
-            transition: background-color 0.2s, transform 0.2s; 
+            transition: background-color 0.2s, transform 0.2s;
         }
         button:hover, .btn:hover {
-            background-color: rgb(45, 45, 45); 
+            background-color: rgb(45, 45, 45);
         }
 
         .btn-img {
             width: 60px;
             height: 60px;
-            background-color: transparent; 
+            background-color: transparent;
         }
 
         .btn-img-pick {
             width: 40px;
             height: 40px;
             background-color: transparent;
-            vertical-align: middle; 
+            vertical-align: middle;
             margin: 0 5px;
         }
 
         .wrapper {
             width: 520px;
-            margin: 20px auto; 
+            margin: 20px auto;
             padding: 20px;
             border: 1px solid rgb(50,50,50);
             border-radius: 10px;
@@ -67,7 +67,7 @@
 
         .game-wrapper {
             display: flex;
-            justify-content: space-around; 
+            justify-content: space-around;
         }
 
         h1 {
@@ -75,13 +75,12 @@
             margin-bottom: 20px;
         }
 
-
         .score-result {
             font-weight: bold;
-            margin-top: 25px; 
+            margin-top: 25px;
             transform: translateY(20px) scale(0.95);
             transition: opacity 0.4s ease-out, transform 0.4s ease-out;
-            min-height: 1.2em; 
+            min-height: 1.2em;
         }
 
         .score-result.visible {
@@ -93,7 +92,7 @@
             margin-top: 20px;
             transform: translateY(20px);
             transition: opacity 0.4s ease-out 0.1s, transform 0.4s ease-out 0.1s;
-            min-height: 60px; 
+            min-height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -128,23 +127,21 @@
             opacity: 0;
         }
 
-        
-        .game-wrapper button:active .btn-img { 
+        .game-wrapper button:active .btn-img {
           transform: scale(0.9);
           transition: transform 0.1s ease-in-out;
         }
 
-        h3.scoreUpdate { 
-            margin: 20px 0px; 
-            font-size: 18px; 
+        h3.scoreUpdate {
+            margin: 20px 0px;
+            font-size: 18px;
         }
         
-        /* استایل دکمه ریست */
         button.reset-button {
-            width: auto; 
-            height: auto; 
+            width: auto;
+            height: auto;
             padding: 10px 20px;
-            border-radius: 5px; 
+            border-radius: 5px;
             font-size: 16px;
             margin-top: 25px;
             border: 1px solid rgb(120, 50, 50);
@@ -177,8 +174,7 @@
         <h2 class="score-result hidden-initially"></h2>
         <div class="computer-score-result hidden-initially"></div>
         
-        <h3 class="scoreUpdate">
-            </h3>
+        <h3 class="scoreUpdate"></h3>
         
         <button class="reset-button" onclick="
             score.wins = 0;
@@ -199,14 +195,12 @@
             if (storedScore) {
                 score = JSON.parse(storedScore);
                 if (score === null || typeof score.wins !== 'number' || typeof score.loses !== 'number' || typeof score.ties !== 'number') {
-                    console.warn("Invalid score format in localStorage. Resetting to default.");
                     throw new Error("Invalid score format");
                 }
             } else {
                 throw new Error("No score in localStorage");
             }
         } catch (e) {
-            console.log("Using default scores because:", e.message);
             score = {
                 wins: 0,
                 loses: 0,
@@ -214,7 +208,7 @@
             };
         }
 
-        scoreUpdate(); 
+        scoreUpdate();
 
         function pickMove() {
             const randomNumber = Math.random();
@@ -234,13 +228,19 @@
             const gameResultDisplay = document.querySelector('.score-result');
             const choicesDisplay = document.querySelector('.computer-score-result');
 
+            if (window.getComputedStyle(gameResultDisplay).display === 'none') {
+                gameResultDisplay.style.display = '';
+            }
+            if (window.getComputedStyle(choicesDisplay).display === 'none') {
+                choicesDisplay.style.display = 'flex';
+            }
+            
+            gameResultDisplay.classList.remove('hidden-initially');
+            choicesDisplay.classList.remove('hidden-initially');
+            
             gameResultDisplay.classList.remove('visible');
             choicesDisplay.classList.remove('visible');
             
-
-            gameResultDisplay.classList.remove('hidden-initially');
-            choicesDisplay.classList.remove('hidden-initially');
-
             const computerMove = pickMove();
             let gameOutcomeText;
 
@@ -282,9 +282,6 @@
             const scoreDisplayElement = document.querySelector('.scoreUpdate');
             if (scoreDisplayElement && score && typeof score.wins !== 'undefined') {
                  scoreDisplayElement.innerHTML = `Wins: ${score.wins}, Losses: ${score.loses}, Ties: ${score.ties}`;
-            } else {
-                if(!scoreDisplayElement) console.error('.scoreUpdate element not found');
-                if(!score || typeof score.wins === 'undefined') console.error('Score object is problematic:', score);
             }
         }
 
@@ -292,9 +289,16 @@
             const computerResult = document.querySelector('.computer-score-result');
             const scoreResult = document.querySelector('.score-result');
 
-
-            if (computerResult) computerResult.innerHTML = '';
-            if (scoreResult) scoreResult.innerHTML = '';
+            if (computerResult) {
+                computerResult.classList.remove('visible');
+                computerResult.innerHTML = '';
+                computerResult.style.display = 'none';
+            }
+            if (scoreResult) {
+                scoreResult.classList.remove('visible');
+                scoreResult.innerHTML = '';
+                scoreResult.style.display = 'none';
+            }
         }
     </script>
 </body>
